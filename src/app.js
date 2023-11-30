@@ -1,12 +1,10 @@
-require('dotenv').config();
-
 const express = require('express');
 const aws = require('aws-sdk');
 const config = require('./config.js');
 const crypto = require('crypto');
 
 const app = express();
-const port = 80;
+const port = process.env.PORT;
 
 app.use(express.json());
 
