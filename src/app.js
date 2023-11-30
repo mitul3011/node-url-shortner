@@ -6,7 +6,7 @@ const config = require('./config.js');
 const crypto = require('crypto');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 80;
 
 app.use(express.json());
 
