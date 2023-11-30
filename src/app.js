@@ -38,10 +38,8 @@ app.post('/createNewShortUrl', async (req, res) => {
         if(err)
             console.log("Error", err);
         else
-            console.log("Success!");
+            res.send({ id });
     });
-
-    res.send({ id });
 });
 
 app.get('/:shortUrl', (req, res) => {
