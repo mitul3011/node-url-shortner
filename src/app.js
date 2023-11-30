@@ -36,7 +36,7 @@ app.post('/createNewShortUrl', async (req, res) => {
 
     dynamoDB.putItem(params, (err, data) => {
         if(err)
-            console.log("Error", err);
+            res.send({ err });
         else
             res.send({ id });
     });
@@ -52,9 +52,31 @@ app.get('/:shortUrl', (req, res) => {
 
     dynamoDB.getItem(params, (err, data) => {
         if(err)
-            console.log(err.message);
+            res.send({ err });
 
-        res.send( data.Item.fullurl );
+        const increamentedClick = Number(data.Item.clicks.N) + 1;
+
+        let params1 = {
+            TableName: config.aws_table_name,
+            Key: {
+                'id': {S: req.params.shortUrl}
+            },
+            UpdateExpression: "set clicks = :clicks",
+            ExpressionAttributeValues: {
+                ':clicks': {N: increamentedClick.toString()}
+            },
+            ReturnValues:"UPDATED_NEW"
+        };
+
+        dynamoDB.updateItem(params1, (err, data) => {
+            if(err)
+                res.send({ err });
+        });
+
+        if(data.Item.expiresAt.N < Date.now())
+            res.send({ err: 'Link Expired!' });
+
+        res.send( data.Item );
     });
 });
 
